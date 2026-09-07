@@ -6,29 +6,29 @@
 
 ## 动作 Action
 
-| 字段组 | 草案语义 |
+| 字段组 | 0.1.0 当前字段与语义 |
 | --- | --- |
-| 身份 | `schema_version`, `project_id`, `action_id`, `adapter_id` |
+| 身份 | `schema_version`, `project_id`, `action_id`, `adapter_id`, `kind` |
 | 执行 | 注册的 executable、typed argv（literal/path）、相对工作根目录；0.1.0 不接受动态参数、自由环境变量或 shell 文本 |
-| 行为 | `effect`、网络范围、密钥引用、运行平台、前置依赖 |
-| 资源 | 超时、锁键、并发限制、取消/清理方式 |
-| 证据 | 产物声明、结果解析器、退出码映射、必须满足的检查类型 |
-| 来源 | 动作定义来源、定义版本和内容哈希 |
+| 行为 | `policy.effect/network/secrets/platforms/prerequisites`；secrets 当前只允许 forbidden |
+| 资源 | `policy.timeout_seconds/locks`；具体取消与清理由未来 Runner 实现 |
+| 证据 | `acceptance.parser/required_artifacts/require_test_counts`；退出码映射属于未来适配器 |
+| 来源 | `source.path/commit/sha256` |
 
 argv 每项为 `{type: literal|path, value: ...}`。解释器入口文件必须是第一项 typed path；P1 将 path 按工作根目录解析为受限路径后再构造真实 argv，literal 保持原值且不经 shell。文件访问权限不能仅凭参数类型证明，还须校验注册动作、符号链接与工具实际参数语义。
 
-参数需做类型、长度、枚举和路径范围校验。凭据只允许引用，不进入参数序列化、日志或结果。即使名字包含 test/doctor，也不能假设动作没有写入副作用。
+参数需做类型、长度、枚举和路径范围校验。当前不支持凭据注入。后续如增加凭据引用，也不得进入参数序列化、日志或结果。即使名字包含 test/doctor，也不能假设动作没有写入副作用。
 
 ## 结果 RunResult
 
-| 字段组 | 草案语义 |
+| 字段组 | 0.1.0 当前字段与语义 |
 | --- | --- |
 | 身份 | `schema_version`, `run_id`, `attempt_id`, `project_id`, `checkout_id`, `action_id` |
 | 来源 | commit、dirty 状态、被测内容摘要、动作版本、工具链及环境摘要 |
 | 运行 | 开始/结束时间、持续时间、退出码/信号、取消/超时原因 |
 | 统计 | 已发现/已执行/通过/失败/跳过数量；缺失为 unknown，不伪造 0 |
-| 证据 | 产物 URI、内容哈希、媒体类型、大小、脱敏状态、必要产物缺失信息 |
-| 解释 | 状态、机器原因码、简短摘要、警告、下一步建议 |
+| 证据 | artifacts 的相对 path、sha256、media_type、size_bytes、redacted；missing_artifacts 列表 |
+| 解释 | `status/reason`；当前没有 summary、warnings 或 suggested_next 字段 |
 
 建议终态：`passed`, `failed`, `blocked`, `cancelled`, `timed_out`, `runner_error`, `inconclusive`；运行中使用 `queued/running`。与原生 runner 状态需要显式映射，不要求修改上游格式。
 
@@ -44,14 +44,14 @@ argv 每项为 `{type: literal|path, value: ...}`。解释器入口文件必须�
 
 ## 知识 KnowledgeRecord
 
-| 字段组 | 草案语义 |
+| 字段组 | 0.1.0 当前字段与语义 |
 | --- | --- |
-| 身份与范围 | `knowledge_id`, `project_id`, `visibility`, `kind`, 模块与适用版本 |
-| 来源 | 仓库 ID、相对路径、commit/内容哈希、标题/行号范围、采集时间 |
-| 内容 | 症状、已观察事实、候选根因、验证步骤、修复与回归引用 |
-| 关联 | 事故 ID、修复提交、测试用例 ID、run/attempt/artifact 引用 |
-| 可信状态 | draft/reviewed/verified/stale/superseded、审核记录、最后验证时间 |
-| 更新 | 替代关系、失效原因、删除标记、索引版本 |
+| 身份与范围 | `schema_version/knowledge_id/project_id/visibility/kind` |
+| 来源 | `source.project_id/path/commit/sha256/line_start/line_end` |
+| 内容 | `title/content`；症状、根因、验证步骤目前写在 content 中，不是独立字段 |
+| 关联 | `evidence` 的 project_id/run_id；`superseded_by` 的 project_id/knowledge_id |
+| 可信状态 | `status/reviewer/verified_at/shared_by` |
+| 更新 | `updated_at/superseded_by`；删除标记、索引版本和失效原因尚无独立字段 |
 
 evidence 是 `{project_id, run_id}` 列表；superseded_by 是 `{project_id, knowledge_id}` 或 null。跨字段校验拒绝不同项目，P1/P2 加载对应记录时还需核验记录存在、实际归属和 hash，不能只信引用声明。
 
@@ -68,3 +68,7 @@ evidence 是 `{project_id, run_id}` 列表；superseded_by 是 `{project_id, kno
 - 进程崩溃后中间状态的恢复、锁租约和跨进程取消协议。
 
 当前版本、大小上限、目录、保留及锁策略见 [P0 验收边界](p0-acceptance.md)。Schema 只校验结构，跨字段算术/项目/时间约束由 `scripts/validate_contracts.py` 补充；运行时还须验证身份、artifact 内容和来源真伪。0.1.0 未加入动态参数、密钥引用、自动迁移与远程锁，不应按表中的未来扩展描述假定它们已支持。
+
+## 当前审查状态
+
+本文件描述数据接口，不等于宣布所有跨字段边界均已覆盖。未关闭问题、精确复现与回归要求见 [本地提交审查](review-unpushed-2026-09-07.md)。

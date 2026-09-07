@@ -8,12 +8,14 @@
 
 这项选择不表示 TestPilot 已经实现生产 Runner，也不表示其他操作系统已获得支持。后续若要支持其他平台，应重新验证进程组取消、超时兜底和残留进程检查，并为平台差异补充适配器。
 
+当前通过结果来自 UTF-8 环境。复审发现非 UTF-8 locale 下探针失败（[R4](review-unpushed-2026-09-07.md)），尚未修复；因此此处不是任意 Linux locale 的通过声明。
+
 ## 可复现实验
 
 在仓库根目录执行：
 
 ```bash
-python3 scripts/runtime_probe.py
+make probe
 ```
 
 脚本只使用 Python 标准库和临时目录，Node.js 只作为可选候选运行时；不会安装依赖、调用任何源项目命令或写入项目运行目录。它向 stdout 输出一个 JSON 摘要，`overall_status=passed` 时返回 0；必需检查失败或已发现的 Node 候选检查失败时返回非零。Node 不存在时记录 `not_available`，不阻断 Python 主检查。
@@ -27,7 +29,7 @@ python3 scripts/runtime_probe.py
 | 平台 | Linux x86_64，`os.name=posix` |
 | literal argv | Python、Node 均通过；带空格、中文、`$(touch ...)`、`; &` 的参数原样到达子进程，marker 未创建 |
 | 进程组取消 | Python、Node 均通过；显式 ready 握手、独立进程组、SIGTERM 超时后 SIGKILL 兜底，父进程和子进程均退出且被回收（包括 zombie 检查） |
-| Markdown round-trip | 通过；中文路径 `知识库/示例 文档.md`、UTF-8 读取、路径范围、SHA-256 和 JSON round-trip 均一致 |
+| Markdown round-trip | 通过；中文路径 `知识库/示例 文档.md`、当前 UTF-8 locale 下读取、路径范围、SHA-256 和 JSON round-trip 均一致 |
 | 总体 | `passed`；推荐 `python3.12-linux` |
 
 Markdown fixture 的本次 SHA-256 为 `d79d82d5ea27db64dde78f98b56d7e234c01cd6b275fe21441a4020df3a1cfb4`。fixture 在临时目录中创建并在进程退出后删除，不属于项目知识或运行证据。

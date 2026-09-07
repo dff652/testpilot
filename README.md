@@ -37,6 +37,7 @@
 | [开发前准备](docs/preparation.md) | 待解决事项、验收数据和开始开发的条件 |
 | [任务与验收](docs/implementation-plan.md) | 主代理与 luna-worker 分工、里程碑 |
 | [开发状态](DEV_STATE.md) | 当前事实、验证范围与下一步 |
+| [本地提交审查](docs/review-unpushed-2026-09-07.md) | 审查范围、发现、验证及待修复项 |
 
 ## 当前使用方式
 
@@ -46,7 +47,7 @@
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements-dev.txt
 make check
-# 单独运行 Python/Node 候选对比探针（需要本机 Node）
+# 单独运行探针；Node 可选，缺失时仍验证 Python
 make probe
 # 校验一个合成结果，不执行其中声明的动作
 .venv/bin/python scripts/validate_contracts.py result examples/valid/result.json
