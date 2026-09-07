@@ -820,5 +820,326 @@
         ]
       }
     ]
+  },
+  {
+    "name": "python attached inline option",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "runner/executable",
+        "value": "python3"
+      },
+      {
+        "path": "runner/argv",
+        "value": [
+          {
+            "type": "path",
+            "value": "-cprint(321)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "python module option entry",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "runner/executable",
+        "value": "python3"
+      },
+      {
+        "path": "runner/argv",
+        "value": [
+          {
+            "type": "path",
+            "value": "-m"
+          },
+          {
+            "type": "literal",
+            "value": "module"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "node attached eval option",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "runner/executable",
+        "value": "node"
+      },
+      {
+        "path": "runner/argv",
+        "value": [
+          {
+            "type": "path",
+            "value": "--eval=console.log(321)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "interpreter options after script",
+    "kind": "action",
+    "valid": true,
+    "changes": [
+      {
+        "path": "runner/executable",
+        "value": "python3"
+      },
+      {
+        "path": "runner/argv",
+        "value": [
+          {
+            "type": "path",
+            "value": "tests/fixture.py"
+          },
+          {
+            "type": "literal",
+            "value": "-c"
+          },
+          {
+            "type": "literal",
+            "value": "--eval"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "partial counts discovered below executed",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "kind",
+        "value": "check"
+      },
+      {
+        "path": "status",
+        "value": "failed"
+      },
+      {
+        "path": "exit_code",
+        "value": 1
+      },
+      {
+        "path": "counts",
+        "value": {
+          "discovered": 2,
+          "executed": 3,
+          "passed": 3,
+          "failed": 0,
+          "skipped": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "partial counts passed above executed",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "kind",
+        "value": "check"
+      },
+      {
+        "path": "status",
+        "value": "failed"
+      },
+      {
+        "path": "exit_code",
+        "value": 1
+      },
+      {
+        "path": "counts",
+        "value": {
+          "discovered": 2,
+          "executed": 2,
+          "passed": 3,
+          "failed": null,
+          "skipped": 0
+        }
+      }
+    ]
+  },
+  {
+    "name": "partial counts cross equation contradiction",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "kind",
+        "value": "check"
+      },
+      {
+        "path": "status",
+        "value": "failed"
+      },
+      {
+        "path": "exit_code",
+        "value": 1
+      },
+      {
+        "path": "counts",
+        "value": {
+          "discovered": 5,
+          "executed": null,
+          "passed": 3,
+          "failed": 2,
+          "skipped": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "partial counts discovered below known tests plus skipped",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "kind",
+        "value": "check"
+      },
+      {
+        "path": "status",
+        "value": "failed"
+      },
+      {
+        "path": "exit_code",
+        "value": 1
+      },
+      {
+        "path": "counts",
+        "value": {
+          "discovered": 3,
+          "executed": null,
+          "passed": 3,
+          "failed": null,
+          "skipped": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "partial counts reasonable unknown",
+    "kind": "result",
+    "valid": true,
+    "changes": [
+      {
+        "path": "kind",
+        "value": "check"
+      },
+      {
+        "path": "status",
+        "value": "failed"
+      },
+      {
+        "path": "exit_code",
+        "value": 1
+      },
+      {
+        "path": "counts",
+        "value": {
+          "discovered": 5,
+          "executed": null,
+          "passed": 3,
+          "failed": null,
+          "skipped": 1
+        }
+      }
+    ]
+  },
+  {
+    "name": "passed check with failure count",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "kind",
+        "value": "check"
+      },
+      {
+        "path": "counts",
+        "value": {
+          "discovered": 2,
+          "executed": 2,
+          "passed": 1,
+          "failed": 1,
+          "skipped": 0
+        }
+      }
+    ]
+  },
+  {
+    "name": "passed check with unknown failure count",
+    "kind": "result",
+    "valid": true,
+    "changes": [
+      {
+        "path": "kind",
+        "value": "check"
+      },
+      {
+        "path": "counts",
+        "value": {
+          "discovered": null,
+          "executed": null,
+          "passed": null,
+          "failed": null,
+          "skipped": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "passed check inferred unknown failure",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "kind",
+        "value": "check"
+      },
+      {
+        "path": "counts",
+        "value": {
+          "discovered": 2,
+          "executed": 2,
+          "passed": 1,
+          "failed": null,
+          "skipped": 0
+        }
+      }
+    ]
+  },
+  {
+    "name": "passed check unknown failure completion",
+    "kind": "result",
+    "valid": true,
+    "changes": [
+      {
+        "path": "kind",
+        "value": "check"
+      },
+      {
+        "path": "counts",
+        "value": {
+          "discovered": 2,
+          "executed": 1,
+          "passed": 1,
+          "failed": null,
+          "skipped": 1
+        }
+      }
+    ]
   }
 ]

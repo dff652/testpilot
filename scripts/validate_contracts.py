@@ -11,6 +11,41 @@ ROOT = Path(__file__).resolve().parents[1]
 KINDS = ("action", "result", "knowledge")
 
 
+def _count_errors(counts, require_no_failures=False):
+    """Check whether known counts have a nonnegative integer completion.
+
+    The execution count must lie in the interval implied by known passed,
+    failed, discovered, and skipped values.  A passed result additionally
+    treats an unknown failed count as zero, so it cannot hide an inferred
+    failure while preserving genuinely all-unknown check results.
+    """
+    discovered = counts["discovered"]
+    executed = counts["executed"]
+    passed = counts["passed"]
+    failed = counts["failed"]
+    skipped = counts["skipped"]
+    if require_no_failures and failed is None:
+        failed = 0
+    lower = (passed if passed is not None else 0) + (failed if failed is not None else 0)
+    upper = None
+    if passed is not None and failed is not None:
+        upper = lower
+    if executed is not None:
+        lower = max(lower, executed)
+        upper = executed if upper is None else min(upper, executed)
+    if discovered is not None:
+        upper = discovered if upper is None else min(upper, discovered)
+    if discovered is not None and skipped is not None:
+        if discovered < skipped:
+            return ["counts:inconsistent"]
+        exact_from_discovered = discovered - skipped
+        lower = max(lower, exact_from_discovered)
+        upper = exact_from_discovered if upper is None else min(upper, exact_from_discovered)
+    if upper is not None and lower > upper:
+        return ["counts:inconsistent"]
+    return []
+
+
 def validate(kind, data):
     schema = json.loads((ROOT / "contracts" / f"{kind}.schema.json").read_text())
     Draft202012Validator.check_schema(schema)
@@ -23,20 +58,17 @@ def validate(kind, data):
     if kind == "action":
         executable = data["runner"]["executable"]
         arguments = data["runner"]["argv"]
-        argv = [a["value"] for a in arguments]
         interpreter = (executable in {"sh", "bash", "dash", "zsh", "ksh", "node"}
                        or executable.startswith("python"))
         if interpreter and (not arguments or arguments[0]["type"] != "path"):
             errors.append("runner:typed_entry_path_required")
-        if executable in {"sh", "bash", "dash", "zsh", "ksh"}:
-            if any(a == "--command" or
-                   (a.startswith("-") and not a.startswith("--") and "c" in a[1:])
-                   for a in argv):
-                errors.append("runner:inline_shell_forbidden")
-        if executable.startswith("python") and "-c" in argv:
-            errors.append("runner:inline_python_forbidden")
-        if executable == "node" and any(a in {"-e", "--eval", "-p", "--print"} for a in argv):
-            errors.append("runner:inline_node_forbidden")
+        # Only the first argument selects the interpreter entry point.  Later
+        # literals belong to the script and may legitimately resemble options
+        # such as ``-c`` or ``--eval``.
+        if interpreter and arguments and arguments[0]["type"] == "path":
+            entry = arguments[0]["value"]
+            if entry.startswith("-"):
+                errors.append("runner:entry_path_is_interpreter_option")
     times = {}
     for name in ("started_at", "ended_at", "verified_at", "updated_at"):
         if data.get(name) is not None:
@@ -49,11 +81,7 @@ def validate(kind, data):
         if len(paths) != len(set(paths)):
             errors.append("artifacts:duplicate_path")
         c = data["counts"]
-        if all(v is not None for v in c.values()):
-            if c["executed"] != c["passed"] + c["failed"]:
-                errors.append("counts:executed_mismatch")
-            if c["discovered"] != c["executed"] + c["skipped"]:
-                errors.append("counts:discovered_mismatch")
+        errors.extend(_count_errors(c, require_no_failures=data["status"] == "passed"))
         if "started_at" in times and "ended_at" in times:
             if times["ended_at"] < times["started_at"]:
                 errors.append("time:reversed")

@@ -14,6 +14,9 @@ import tempfile
 import time
 
 
+UTF8_REEXEC_ENV = "TESTPILOT_RUNTIME_PROBE_UTF8"
+
+
 PYTHON_GROUP_FIXTURE = r'''
 import json
 import os
@@ -100,7 +103,7 @@ def wait_ready(path, process):
     deadline = time.monotonic() + 5
     while time.monotonic() < deadline:
         try:
-            return json.loads(path.read_text())
+            return json.loads(path.read_text(encoding="utf-8"))
         except (FileNotFoundError, json.JSONDecodeError):
             if process.poll() is not None:
                 raise RuntimeError("fixture exited before ready")
@@ -129,13 +132,17 @@ def candidate(name, executable, root):
             "process.stdout.write(JSON.stringify(process.argv.slice(1)))")
     completed = subprocess.run(
         [executable, "-c" if name == "python" else "-e", code, literal],
-        capture_output=True, text=True, check=True, timeout=5, shell=False)
+        capture_output=True, text=True, encoding="utf-8", check=True,
+        timeout=5, shell=False)
     if json.loads(completed.stdout) != [literal] or marker.exists():
         raise RuntimeError("literal argv mismatch")
     ready = root / (name + "-ready.json")
     child_ready = root / (name + "-child-ready")
     fixture = root / (name + (".py" if name == "python" else ".js"))
-    fixture.write_text(PYTHON_GROUP_FIXTURE if name == "python" else NODE_GROUP_FIXTURE)
+    fixture.write_text(
+        PYTHON_GROUP_FIXTURE if name == "python" else NODE_GROUP_FIXTURE,
+        encoding="utf-8",
+    )
     process = subprocess.Popen(
         [executable, str(fixture), str(ready), str(child_ready), str(root / (name + "-pid"))],
         cwd=root, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
@@ -167,7 +174,28 @@ def candidate(name, executable, root):
             "no_leftover_processes": True}
 
 
+def ensure_utf8_runtime():
+    """Re-exec the standalone probe when the parent selected a non-UTF-8 locale."""
+    if sys.platform != "linux" or os.environ.get(UTF8_REEXEC_ENV) == "1":
+        return
+    encodings = (
+        sys.getfilesystemencoding(),
+        sys.stdout.encoding,
+        sys.stderr.encoding,
+    )
+    if all((encoding or "").casefold().replace("-", "").replace("_", "") == "utf8"
+           for encoding in encodings):
+        return
+    environment = os.environ.copy()
+    environment["PYTHONUTF8"] = "1"
+    environment["PYTHONIOENCODING"] = "utf-8"
+    environment[UTF8_REEXEC_ENV] = "1"
+    script = os.path.abspath(__file__)
+    os.execve(sys.executable, [sys.executable, script, *sys.argv[1:]], environment)
+
+
 def main():
+    ensure_utf8_runtime()
     if sys.platform != "linux" or sys.version_info[:2] != (3, 12):
         print(json.dumps({"overall_status": "blocked", "reason": "requires Python 3.12/Linux"}))
         return 1
@@ -186,7 +214,9 @@ def main():
             node = shutil.which("node")
             summary["checks"]["python"] = candidate("python", sys.executable, root)
             if node:
-                summary["node"] = subprocess.check_output([node, "--version"], text=True, timeout=5).strip()
+                summary["node"] = subprocess.check_output(
+                    [node, "--version"], text=True, encoding="utf-8", timeout=5,
+                ).strip()
                 summary["checks"]["node"] = candidate("node", node, root)
             else:
                 summary["checks"]["node"] = {"status": "not_available"}
@@ -194,7 +224,8 @@ def main():
             document.parent.mkdir()
             content = "# 故障记录\n\n日志路径：中文/服务\n\n字面文本：$(touch 不应执行)\n"
             document.write_text(content, encoding="utf-8")
-            record = {"path": str(document.relative_to(root)), "content": document.read_text(),
+            record = {"path": str(document.relative_to(root)),
+                      "content": document.read_text(encoding="utf-8"),
                       "sha256": hashlib.sha256(document.read_bytes()).hexdigest()}
             if json.loads(json.dumps(record, ensure_ascii=False)) != record or record["content"] != content:
                 raise RuntimeError("Markdown roundtrip mismatch")
@@ -202,7 +233,7 @@ def main():
         summary.update(overall_status="passed", recommendation="python3.12-linux")
     except (OSError, ValueError, KeyError, RuntimeError, subprocess.SubprocessError) as error:
         summary.update(overall_status="failed", error=type(error).__name__)
-    print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
+    print(json.dumps(summary, ensure_ascii=True, sort_keys=True))
     return 0 if summary["overall_status"] == "passed" else 1
 
 

@@ -356,6 +356,33 @@
         "properties": {
           "status": {
             "const": "passed"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "counts": {
+            "properties": {
+              "failed": {
+                "anyOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "const": 0
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "passed"
           },
           "kind": {
             "const": "test"

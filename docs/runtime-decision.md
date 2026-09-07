@@ -8,7 +8,7 @@
 
 这项选择不表示 TestPilot 已经实现生产 Runner，也不表示其他操作系统已获得支持。后续若要支持其他平台，应重新验证进程组取消、超时兜底和残留进程检查，并为平台差异补充适配器。
 
-当前通过结果来自 UTF-8 环境。复审发现非 UTF-8 locale 下探针失败（[R4](review-unpushed-2026-09-07.md)），尚未修复；因此此处不是任意 Linux locale 的通过声明。
+复审发现的非 UTF-8 locale 问题已修复（[R4 关闭记录](review-unpushed-2026-09-07.md)）。探针 CLI 检测到非 UTF-8 文件系统或输出编码时，以 UTF-8 模式重启自身，并由子进程继承该模式；文件与子进程输出显式按 UTF-8 处理。已验证 C locale 且禁用 Python 自动 UTF-8/coercion 的父环境，Node 存在和缺失场景均通过；不修改调用者或系统 locale。
 
 ## 可复现实验
 
@@ -29,7 +29,7 @@ make probe
 | 平台 | Linux x86_64，`os.name=posix` |
 | literal argv | Python、Node 均通过；带空格、中文、`$(touch ...)`、`; &` 的参数原样到达子进程，marker 未创建 |
 | 进程组取消 | Python、Node 均通过；显式 ready 握手、独立进程组、SIGTERM 超时后 SIGKILL 兜底，父进程和子进程均退出且被回收（包括 zombie 检查） |
-| Markdown round-trip | 通过；中文路径 `知识库/示例 文档.md`、当前 UTF-8 locale 下读取、路径范围、SHA-256 和 JSON round-trip 均一致 |
+| Markdown round-trip | 通过；中文路径 `知识库/示例 文档.md`、显式 UTF-8 读取、路径范围、SHA-256 和 JSON round-trip 均一致 |
 | 总体 | `passed`；推荐 `python3.12-linux` |
 
 Markdown fixture 的本次 SHA-256 为 `d79d82d5ea27db64dde78f98b56d7e234c01cd6b275fe21441a4020df3a1cfb4`。fixture 在临时目录中创建并在进程退出后删除，不属于项目知识或运行证据。

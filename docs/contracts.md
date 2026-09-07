@@ -15,7 +15,7 @@
 | 证据 | `acceptance.parser/required_artifacts/require_test_counts`；退出码映射属于未来适配器 |
 | 来源 | `source.path/commit/sha256` |
 
-argv 每项为 `{type: literal|path, value: ...}`。解释器入口文件必须是第一项 typed path；P1 将 path 按工作根目录解析为受限路径后再构造真实 argv，literal 保持原值且不经 shell。文件访问权限不能仅凭参数类型证明，还须校验注册动作、符号链接与工具实际参数语义。
+argv 每项为 `{type: literal|path, value: ...}`。解释器入口文件必须是第一项 typed path，且不得以 `-` 开头；入口之后的 literal 参数按脚本参数处理，允许字面的 `-c` 或 `--eval`。首版不支持入口之前的解释器选项；P1 将 path 按工作根目录解析为受限路径后再构造真实 argv，literal 保持原值且不经 shell。文件访问权限不能仅凭参数类型证明，还须校验注册动作、符号链接与工具实际参数语义。
 
 参数需做类型、长度、枚举和路径范围校验。当前不支持凭据注入。后续如增加凭据引用，也不得进入参数序列化、日志或结果。即使名字包含 test/doctor，也不能假设动作没有写入副作用。
 
@@ -32,7 +32,7 @@ argv 每项为 `{type: literal|path, value: ...}`。解释器入口文件必须�
 
 建议终态：`passed`, `failed`, `blocked`, `cancelled`, `timed_out`, `runner_error`, `inconclusive`；运行中使用 `queued/running`。与原生 runner 状态需要显式映射，不要求修改上游格式。
 
-`passed` 只表示该动作声明的验收条件满足。测试动作通常需要实际执行证据，零测试或仅跳过应为 `inconclusive`/`blocked`；静态检查等不产生测试计数的动作可依据自身已登记规则成功。测试中的合法预期失败等状态由解析器显式处理。
+`passed` 只表示该动作声明的验收条件满足。测试动作通常需要实际执行证据，零测试或仅跳过应为 `inconclusive`/`blocked`；静态检查等不产生测试计数的动作可依据自身已登记规则成功。测试中的合法预期失败等状态由解析器显式处理。所有 passed 结果在 failed 已知时都要求其为 0；check 可保留未知计数，但必须存在零失败补全，不能用 null 隐藏其他计数已推导出的失败。计数未知不放宽已知事实：校验器检查是否存在非负补全，使 `executed = passed + failed` 和 `discovered = executed + skipped` 同时成立。
 
 示例映射：
 
@@ -71,4 +71,4 @@ evidence 是 `{project_id, run_id}` 列表；superseded_by 是 `{project_id, kno
 
 ## 当前审查状态
 
-本文件描述数据接口，不等于宣布所有跨字段边界均已覆盖。未关闭问题、精确复现与回归要求见 [本地提交审查](review-unpushed-2026-09-07.md)。
+本文件描述数据接口，不等于宣布所有跨字段边界均已覆盖。本轮 R1–R5 已修复，原始反例、关闭证据与范围限制见 [本地提交审查](review-unpushed-2026-09-07.md)。
