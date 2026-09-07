@@ -1,0 +1,44 @@
+{
+  "schema_version": "0.1.0",
+  "project_id": "fixture",
+  "action_id": "test.synthetic",
+  "adapter_id": "fixture",
+  "kind": "test",
+  "runner": {
+    "executable": "python3",
+    "argv": [
+      {
+        "type": "path",
+        "value": "tests/fixture.py"
+      }
+    ],
+    "cwd": "."
+  },
+  "policy": {
+    "effect": "workspace-write",
+    "network": "none",
+    "secrets": "forbidden",
+    "platforms": [
+      "linux"
+    ],
+    "timeout_seconds": 10,
+    "locks": [
+      "git-common-dir"
+    ],
+    "prerequisites": [
+      "synthetic fixture only"
+    ]
+  },
+  "acceptance": {
+    "parser": "fixture-json",
+    "required_artifacts": [
+      "report.json"
+    ],
+    "require_test_counts": true
+  },
+  "source": {
+    "path": "docs/synthetic.md",
+    "commit": "0000000000000000000000000000000000000000",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  }
+}

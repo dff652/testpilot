@@ -1,0 +1,57 @@
+{
+  "schema_version": "0.1.0",
+  "project_id": "agent-mail",
+  "action_id": "versions.check",
+  "adapter_id": "sop-result",
+  "kind": "check",
+  "runner": {
+    "executable": "bash",
+    "argv": [
+      {
+        "type": "path",
+        "value": "scripts/sop.sh"
+      },
+      {
+        "type": "literal",
+        "value": "run"
+      },
+      {
+        "type": "literal",
+        "value": "versions.check"
+      },
+      {
+        "type": "literal",
+        "value": "--json"
+      }
+    ],
+    "cwd": "."
+  },
+  "policy": {
+    "effect": "workspace-write",
+    "network": "none",
+    "secrets": "forbidden",
+    "platforms": [
+      "linux"
+    ],
+    "timeout_seconds": 60,
+    "locks": [
+      "git-common-dir"
+    ],
+    "prerequisites": [
+      "Python3; complete native checkout",
+      "Native runner writes and prunes .agent-mail/dev-sop records"
+    ]
+  },
+  "acceptance": {
+    "parser": "sop-result",
+    "required_artifacts": [
+      "native-output.log"
+    ],
+    "require_test_counts": false
+  },
+  "source": {
+    "path": "contracts/dev-sop/actions.json",
+    "commit": "97710415187df20b6fa61daa39d8499f3db24e8e",
+    "sha256": "9a1a8ebb4ed2d1a1ffbe613f165716b4bbfb1dc2cae2f870c1f003a2f9fc0de2"
+  }
+}

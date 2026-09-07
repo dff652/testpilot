@@ -1,0 +1,59 @@
+{
+  "schema_version": "0.1.0",
+  "project_id": "ai-asset-hub",
+  "action_id": "go.test",
+  "adapter_id": "go-test-json",
+  "kind": "test",
+  "runner": {
+    "executable": "go",
+    "argv": [
+      {
+        "type": "literal",
+        "value": "test"
+      },
+      {
+        "type": "literal",
+        "value": "-json"
+      },
+      {
+        "type": "literal",
+        "value": "-count=1"
+      },
+      {
+        "type": "path",
+        "value": "./..."
+      }
+    ],
+    "cwd": "."
+  },
+  "policy": {
+    "effect": "workspace-write",
+    "network": "none",
+    "secrets": "forbidden",
+    "platforms": [
+      "linux"
+    ],
+    "timeout_seconds": 900,
+    "locks": [
+      "git-common-dir",
+      "resolved-go-cache"
+    ],
+    "prerequisites": [
+      "Go version matching go.mod; prefilled isolated module cache",
+      "Adapter must set isolated HOME/GOCACHE/GOMODCACHE and GOPROXY=off/GOTOOLCHAIN=local",
+      "Parser and isolation fixture not implemented; do not execute this declaration"
+    ]
+  },
+  "acceptance": {
+    "parser": "go-test-json",
+    "required_artifacts": [
+      "native-output.log"
+    ],
+    "require_test_counts": true
+  },
+  "source": {
+    "path": "scripts/check-local.sh",
+    "commit": "19431e191e10081012b576e5e3c50c531bcadbf2",
+    "sha256": "053e743a82feab4da063df26412ec11ae41df152f2dd97aee659de69ad078ec2"
+  }
+}

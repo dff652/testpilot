@@ -1,0 +1,824 @@
+[
+  {
+    "name": "action unknown field",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "surprise",
+        "value": true
+      }
+    ]
+  },
+  {
+    "name": "action unknown version",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "schema_version",
+        "value": "9.0.0"
+      }
+    ]
+  },
+  {
+    "name": "result unknown field",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "surprise",
+        "value": true
+      }
+    ]
+  },
+  {
+    "name": "result unknown version",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "schema_version",
+        "value": "9.0.0"
+      }
+    ]
+  },
+  {
+    "name": "knowledge unknown field",
+    "kind": "knowledge",
+    "valid": false,
+    "changes": [
+      {
+        "path": "surprise",
+        "value": true
+      }
+    ]
+  },
+  {
+    "name": "knowledge unknown version",
+    "kind": "knowledge",
+    "valid": false,
+    "changes": [
+      {
+        "path": "schema_version",
+        "value": "9.0.0"
+      }
+    ]
+  },
+  {
+    "name": "action traversal",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "runner/cwd",
+        "value": "../sibling"
+      }
+    ]
+  },
+  {
+    "name": "action absolute path",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "runner/cwd",
+        "value": "/tmp"
+      }
+    ]
+  },
+  {
+    "name": "action windows path",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "runner/cwd",
+        "value": "C:\\temp"
+      }
+    ]
+  },
+  {
+    "name": "action free shell",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "runner/shell",
+        "value": true
+      }
+    ]
+  },
+  {
+    "name": "action missing lock",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "policy/locks",
+        "value": []
+      }
+    ]
+  },
+  {
+    "name": "action test without counts",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "acceptance/require_test_counts",
+        "value": false
+      }
+    ]
+  },
+  {
+    "name": "action literal argv",
+    "kind": "action",
+    "valid": true,
+    "changes": [
+      {
+        "path": "runner/argv",
+        "value": [
+          {
+            "type": "path",
+            "value": "tests/fixture.py"
+          },
+          {
+            "type": "literal",
+            "value": "中文 空格"
+          },
+          {
+            "type": "literal",
+            "value": "$(touch never)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "result zero tests",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "counts",
+        "value": {
+          "discovered": 0,
+          "executed": 0,
+          "passed": 0,
+          "failed": 0,
+          "skipped": 0
+        }
+      }
+    ]
+  },
+  {
+    "name": "result skipped only",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "counts",
+        "value": {
+          "discovered": 2,
+          "executed": 0,
+          "passed": 0,
+          "failed": 0,
+          "skipped": 2
+        }
+      }
+    ]
+  },
+  {
+    "name": "result missing report",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "missing_artifacts",
+        "value": [
+          "report.json"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "result no evidence",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "artifacts",
+        "value": []
+      }
+    ]
+  },
+  {
+    "name": "result nonzero passed",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "exit_code",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "name": "result unknown counts",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "counts/executed",
+        "value": null
+      }
+    ]
+  },
+  {
+    "name": "result count inconsistency",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "counts/discovered",
+        "value": 99
+      }
+    ]
+  },
+  {
+    "name": "result failure inconsistency",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "counts/failed",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "name": "result reverse time",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "ended_at",
+        "value": "2026-09-06T00:00:00Z"
+      }
+    ]
+  },
+  {
+    "name": "result invalid date",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "ended_at",
+        "value": "2026-02-30T00:00:01Z"
+      }
+    ]
+  },
+  {
+    "name": "result null duration",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "duration_ms",
+        "value": null
+      }
+    ]
+  },
+  {
+    "name": "result failed",
+    "kind": "result",
+    "valid": true,
+    "changes": [
+      {
+        "path": "status",
+        "value": "failed"
+      },
+      {
+        "path": "exit_code",
+        "value": null
+      },
+      {
+        "path": "reason",
+        "value": "fixture.failed"
+      },
+      {
+        "path": "counts",
+        "value": {
+          "discovered": null,
+          "executed": null,
+          "passed": null,
+          "failed": null,
+          "skipped": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "result blocked",
+    "kind": "result",
+    "valid": true,
+    "changes": [
+      {
+        "path": "status",
+        "value": "blocked"
+      },
+      {
+        "path": "exit_code",
+        "value": null
+      },
+      {
+        "path": "reason",
+        "value": "fixture.blocked"
+      },
+      {
+        "path": "counts",
+        "value": {
+          "discovered": null,
+          "executed": null,
+          "passed": null,
+          "failed": null,
+          "skipped": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "result cancelled",
+    "kind": "result",
+    "valid": true,
+    "changes": [
+      {
+        "path": "status",
+        "value": "cancelled"
+      },
+      {
+        "path": "exit_code",
+        "value": null
+      },
+      {
+        "path": "reason",
+        "value": "fixture.cancelled"
+      },
+      {
+        "path": "counts",
+        "value": {
+          "discovered": null,
+          "executed": null,
+          "passed": null,
+          "failed": null,
+          "skipped": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "result timed_out",
+    "kind": "result",
+    "valid": true,
+    "changes": [
+      {
+        "path": "status",
+        "value": "timed_out"
+      },
+      {
+        "path": "exit_code",
+        "value": null
+      },
+      {
+        "path": "reason",
+        "value": "fixture.timed_out"
+      },
+      {
+        "path": "counts",
+        "value": {
+          "discovered": null,
+          "executed": null,
+          "passed": null,
+          "failed": null,
+          "skipped": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "result runner_error",
+    "kind": "result",
+    "valid": true,
+    "changes": [
+      {
+        "path": "status",
+        "value": "runner_error"
+      },
+      {
+        "path": "exit_code",
+        "value": null
+      },
+      {
+        "path": "reason",
+        "value": "fixture.runner_error"
+      },
+      {
+        "path": "counts",
+        "value": {
+          "discovered": null,
+          "executed": null,
+          "passed": null,
+          "failed": null,
+          "skipped": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "result inconclusive",
+    "kind": "result",
+    "valid": true,
+    "changes": [
+      {
+        "path": "status",
+        "value": "inconclusive"
+      },
+      {
+        "path": "exit_code",
+        "value": null
+      },
+      {
+        "path": "reason",
+        "value": "fixture.inconclusive"
+      },
+      {
+        "path": "counts",
+        "value": {
+          "discovered": null,
+          "executed": null,
+          "passed": null,
+          "failed": null,
+          "skipped": null
+        }
+      }
+    ]
+  },
+  {
+    "name": "result running",
+    "kind": "result",
+    "valid": true,
+    "changes": [
+      {
+        "path": "status",
+        "value": "running"
+      },
+      {
+        "path": "ended_at",
+        "value": null
+      },
+      {
+        "path": "exit_code",
+        "value": null
+      },
+      {
+        "path": "duration_ms",
+        "value": null
+      }
+    ]
+  },
+  {
+    "name": "result running with exit",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "status",
+        "value": "running"
+      },
+      {
+        "path": "ended_at",
+        "value": null
+      }
+    ]
+  },
+  {
+    "name": "knowledge unverified",
+    "kind": "knowledge",
+    "valid": false,
+    "changes": [
+      {
+        "path": "status",
+        "value": "verified"
+      }
+    ]
+  },
+  {
+    "name": "knowledge verified fixture",
+    "kind": "knowledge",
+    "valid": true,
+    "changes": [
+      {
+        "path": "status",
+        "value": "verified"
+      },
+      {
+        "path": "reviewer",
+        "value": "fixture-reviewer"
+      },
+      {
+        "path": "verified_at",
+        "value": "2026-09-07T00:00:00Z"
+      },
+      {
+        "path": "evidence",
+        "value": [
+          {
+            "project_id": "fixture",
+            "run_id": "run.synthetic"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "knowledge cross project",
+    "kind": "knowledge",
+    "valid": false,
+    "changes": [
+      {
+        "path": "source/project_id",
+        "value": "other-project"
+      }
+    ]
+  },
+  {
+    "name": "knowledge reverse lines",
+    "kind": "knowledge",
+    "valid": false,
+    "changes": [
+      {
+        "path": "source/line_start",
+        "value": 10
+      }
+    ]
+  },
+  {
+    "name": "knowledge shared draft",
+    "kind": "knowledge",
+    "valid": false,
+    "changes": [
+      {
+        "path": "visibility",
+        "value": "shared"
+      }
+    ]
+  },
+  {
+    "name": "knowledge self replacement",
+    "kind": "knowledge",
+    "valid": false,
+    "changes": [
+      {
+        "path": "superseded_by",
+        "value": {
+          "project_id": "fixture",
+          "knowledge_id": "lesson.synthetic"
+        }
+      }
+    ]
+  },
+  {
+    "name": "knowledge traversal",
+    "kind": "knowledge",
+    "valid": false,
+    "changes": [
+      {
+        "path": "source/path",
+        "value": "docs/../../private"
+      }
+    ]
+  },
+  {
+    "name": "action drive path",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "runner/cwd",
+        "value": "C:/temp"
+      }
+    ]
+  },
+  {
+    "name": "inline shell command",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "runner/executable",
+        "value": "bash"
+      },
+      {
+        "path": "runner/argv",
+        "value": [
+          {
+            "type": "literal",
+            "value": "-lc"
+          },
+          {
+            "type": "literal",
+            "value": "echo fixture"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "inline python command",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "runner/argv",
+        "value": [
+          {
+            "type": "literal",
+            "value": "-c"
+          },
+          {
+            "type": "literal",
+            "value": "print(1)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "inline node command",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "runner/executable",
+        "value": "node"
+      },
+      {
+        "path": "runner/argv",
+        "value": [
+          {
+            "type": "literal",
+            "value": "--eval"
+          },
+          {
+            "type": "literal",
+            "value": "1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "duplicate artifact",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "artifacts",
+        "value": [
+          {
+            "path": "report.json",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "media_type": "application/json",
+            "size_bytes": 1,
+            "redacted": true
+          },
+          {
+            "path": "report.json",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "media_type": "application/json",
+            "size_bytes": 1,
+            "redacted": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "compact datetime",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "ended_at",
+        "value": "20260907T000001Z"
+      }
+    ]
+  },
+  {
+    "name": "space datetime",
+    "kind": "result",
+    "valid": false,
+    "changes": [
+      {
+        "path": "ended_at",
+        "value": "2026-09-07 00:00:01Z"
+      }
+    ]
+  },
+  {
+    "name": "foreign evidence",
+    "kind": "knowledge",
+    "valid": false,
+    "changes": [
+      {
+        "path": "evidence",
+        "value": [
+          {
+            "project_id": "other",
+            "run_id": "run.1"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "foreign replacement",
+    "kind": "knowledge",
+    "valid": false,
+    "changes": [
+      {
+        "path": "status",
+        "value": "superseded"
+      },
+      {
+        "path": "superseded_by",
+        "value": {
+          "project_id": "other",
+          "knowledge_id": "lesson.1"
+        }
+      }
+    ]
+  },
+  {
+    "name": "outside script relative",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "runner/argv",
+        "value": [
+          {
+            "type": "path",
+            "value": "../outside.sh"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "outside script absolute",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "runner/argv",
+        "value": [
+          {
+            "type": "path",
+            "value": "/tmp/outside.sh"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "script disguised literal",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "runner/argv",
+        "value": [
+          {
+            "type": "literal",
+            "value": "../outside.sh"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "untyped argv",
+    "kind": "action",
+    "valid": false,
+    "changes": [
+      {
+        "path": "runner/argv",
+        "value": [
+          "tests/fixture.py"
+        ]
+      }
+    ]
+  }
+]

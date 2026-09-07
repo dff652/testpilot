@@ -2,10 +2,11 @@
 
 ## Scope and state
 
-- Read README.md and DEV_STATE.md first. This repository is in preparation, not a working test platform.
+- Read README.md and DEV_STATE.md first. This repository has P0 contract tooling and fixture probes, not a working cross-project test platform.
 - Preserve unrelated edits. Workers own named files; only the integrating agent stages and commits unless explicitly delegated.
 - Documentation and schemas must distinguish proposals, implemented features, executed checks, and verified outcomes.
 - Do not infer authorization to deploy, publish, push, modify production, or run source-project tests from a documentation task.
+- Project-specific user instruction: all pushes are performed manually by the user. Agents may prepare and verify local commits but must not run git push or equivalent remote Git upload operations.
 
 ## Evidence and execution
 

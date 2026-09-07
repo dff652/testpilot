@@ -1,6 +1,6 @@
-# 三类契约草案
+# 三类数据契约 0.1.0
 
-日期：2026-09-07。状态：语义草案；尚无 JSON Schema、解析器或兼容性保证。实现前先提交合法/非法样例及 schema 评审，避免多个 worker 自行定义格式。
+日期：2026-09-07。P0 已提供 [Action Schema](../contracts/action.schema.json)、[Result Schema](../contracts/result.schema.json)、[Knowledge Schema](../contracts/knowledge.schema.json) 和离线跨字段校验器。`make check` 同时检查 Schema 与 [合成样例](../examples/README.md)。这些格式为首个适配器提供接口基线，不是已实现的生产协议。
 
 借鉴 Agent Mail 的 `contracts/dev-sop/actions.json`、`result.schema.json` 和 `scripts/dev_sop.py`，先做适配再决定哪些设计应提炼。不得把单仓库路径、锁和保留策略直接推广到所有项目。
 
@@ -9,11 +9,13 @@
 | 字段组 | 草案语义 |
 | --- | --- |
 | 身份 | `schema_version`, `project_id`, `action_id`, `adapter_id` |
-| 执行 | 注册的 executable/argv、工作根目录、类型化参数、受控环境变量；不接受自由 shell 文本 |
+| 执行 | 注册的 executable、typed argv（literal/path）、相对工作根目录；0.1.0 不接受动态参数、自由环境变量或 shell 文本 |
 | 行为 | `effect`、网络范围、密钥引用、运行平台、前置依赖 |
 | 资源 | 超时、锁键、并发限制、取消/清理方式 |
 | 证据 | 产物声明、结果解析器、退出码映射、必须满足的检查类型 |
 | 来源 | 动作定义来源、定义版本和内容哈希 |
+
+argv 每项为 `{type: literal|path, value: ...}`。解释器入口文件必须是第一项 typed path；P1 将 path 按工作根目录解析为受限路径后再构造真实 argv，literal 保持原值且不经 shell。文件访问权限不能仅凭参数类型证明，还须校验注册动作、符号链接与工具实际参数语义。
 
 参数需做类型、长度、枚举和路径范围校验。凭据只允许引用，不进入参数序列化、日志或结果。即使名字包含 test/doctor，也不能假设动作没有写入副作用。
 
@@ -51,16 +53,18 @@
 | 可信状态 | draft/reviewed/verified/stale/superseded、审核记录、最后验证时间 |
 | 更新 | 替代关系、失效原因、删除标记、索引版本 |
 
+evidence 是 `{project_id, run_id}` 列表；superseded_by 是 `{project_id, knowledge_id}` 或 null。跨字段校验拒绝不同项目，P1/P2 加载对应记录时还需核验记录存在、实际归属和 hash，不能只信引用声明。
+
 行号仅用于定位，内容哈希/版本用于识别事实。自动生成内容默认 draft。模型分数不等于验证；跨项目经验须经过显式审核与范围推广。
 
 索引删除与证据删除分开：源文件删除后立即停止作为当前知识检索，历史证据按保留规则处理。导出与恢复必须保持引用完整；不能只备份向量或摘要。
 
-## 实现前待定
+## 版本边界与后续实现
 
-- schema 版本和未知字段处理、兼容升级及迁移策略。
-- 产物大小上限、内容哈希算法、保留期限、原始日志访问边界。
+- 当前版本 0.1.0，拒绝未知字段和版本；未来破坏性升级须有迁移样例。
+- 产物上限 10 MiB，SHA-256，默认 14 天且显式清理；已引用证据保留规则见 P0 验收边界。
 - project/checkout 的注册和移动识别规则。
 - 原生错误码、TAP/JUnit/JSON 等格式在首批项目中的实际可用性。
 - 进程崩溃后中间状态的恢复、锁租约和跨进程取消协议。
 
-上述事项由 P0 样本与实验确定，不能仅靠设计文字宣布完成。
+当前版本、大小上限、目录、保留及锁策略见 [P0 验收边界](p0-acceptance.md)。Schema 只校验结构，跨字段算术/项目/时间约束由 `scripts/validate_contracts.py` 补充；运行时还须验证身份、artifact 内容和来源真伪。0.1.0 未加入动态参数、密钥引用、自动迁移与远程锁，不应按表中的未来扩展描述假定它们已支持。

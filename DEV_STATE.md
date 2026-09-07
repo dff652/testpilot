@@ -2,38 +2,39 @@
 
 ## Goal
 
-创建独立本地仓库，归档 TestPilot 调研与实施方向，明确开发准备、任务分工和验收条件。
+完成 TestPilot P0：确定运行时，落实动作/结果/知识契约、合成校验和三个项目接入清单，为 P1 提供可审查基线。
 
 ## Verified current state
 
-- 2026-09-07：初始化 `/home/dff652/my_project/testpilot` 的本地 main 分支。
-- 内容为开发准备文档；产品代码、JSON Schema、Runner、适配器和索引尚未实现。
-- 上一轮已读取 NAS 原文章及源码配图；文章对应仓库仍未核实。
-- 主代理复核 Agent Mail 的动作清单、结果 schema、SOP 并发边界，以及 AI Asset Hub 检查脚本、TS Platform 并发约束、homelab-doctor Makefile。
-- 本机工具读数：Python 3.12.3、Node.js v20.19.2、Git 2.43.0；未安装或升级依赖。
+- 初始文档提交：`5c817b4`。当前在 main 分支，本轮是 P0 增量。
+- 三份 JSON Schema 0.1.0、跨字段校验 CLI、合成样例、三个项目动作声明和本仓库 Makefile 已实现。
+- 选择 Python 3.12/Linux。当前 Python 3.12.3、Node v20.19.2 的合成子进程探针通过；Node 缺失时 Python 检查也通过。没有速度比较或其他平台验收。
+- `.venv` 隔离安装 `jsonschema==4.26.0`，requirements-dev.txt 固定全部六项解析依赖；系统运行时与原项目依赖未改动。
+- 三项目文档白名单/知识样本、动作来源 commit/hash、锁需求和结果解析要求已登记。
+- 生产 Runner、项目适配器、原生测试基线、知识索引和恢复能力尚未实现/执行。
 
 ## Decisions
 
-- CLI 优先；首批 Agent Mail、AI Asset Hub、homelab-doctor。
-- 项目原生文档为事实来源，索引可重建，运行证据单独管理。
-- 主代理负责共享契约与最终验收；luna-worker 执行有明确文件边界的任务。
-- 技术栈、正式 schema 和验收样本在 P0 最小实验后确定。
+- CLI 优先，首批 Agent Mail、AI Asset Hub、homelab-doctor。
+- Agent Mail 首动作是静态 `versions.check`，不是测试覆盖；`test.fast` 的失败 fallback 暂不作为自动通过门禁。
+- Go 接入采用待验证的 JSON/无结果缓存事件流，不能把包级 ok 行伪造成测试计数。
+- 知识与证据引用显式带项目归属；解释器入口使用 typed path；结构校验不证明真实文件或记录可信。
+- 项目原生文档为事实来源，索引可重建，运行证据单独管理。P0/P1 不调用外部模型或写 AgentMemory。
 
 ## Validation
 
-2026-09-07 初始文档已由主代理审查，修正文中版本号表述和首版 CLI 范围。检查结果：
-
-- `git diff --cached --check`：通过。
-- homelab 的 `tools/repo-doctor/check-markdown-links.py`：11 个本地引用通过。
-- homelab 的 `tools/repo-doctor/scan-staged-secrets.sh`：暂存新增内容扫描通过。
-- 临时只读校验：61 处源文件路径存在且行号范围有效；不代表这些引用涉及的功能已运行验证。
-
-检查工具在本机相邻 homelab 仓库中，尚未纳入 TestPilot 的可移植开发工具链。未执行产品或原项目测试。
+- `make check`：4 个 unittest 测试组，52 个 mutation 场景、三类基础样例、三个试点声明及非法顶层类型；本地 Markdown 链接和 diff 检查通过。
+- `make probe`：Python/Node literal argv、ready 握手、TERM 超时/KILL、Linux subreaper 回收（含 zombie）、中文路径/hash/JSON 通过。
+- `PATH=/nonexistent /usr/bin/python3 scripts/runtime_probe.py`：Node 缺失场景通过。
+- `.venv/bin/python -m pip check`：通过。
+- 定向源检查：15 个白名单文档路径及三份源文件 SHA-256 一致。
+- 主代理审查 worker 产物并复跑本地检查。独立审查发现的跨项目引用和未区分路径参数问题已修复；worker 复核六个新增拒绝样例及 make check 通过。
+- `git diff --cached --check` 与暂存敏感内容扫描通过，提交范围限定本项目 26 个文件。没有执行任何原项目测试、生产操作或外部知识写入。
 
 ## Next action
 
-完成 [开发前准备](docs/preparation.md) 的 P0：三个动作清单、schema 样例、技术选型实验与隔离验收 fixture，再开始 P1。
+P1：实现 fixture Runner、注册表与资源锁，再接 Agent Mail 第一个适配器。按 [P0 验收边界](docs/p0-acceptance.md) 分配文件所有权并验证错误路径，之后扩展 Go/Shell 与知识索引。
 
 ## External state
 
-未配置远端、未 push、未部署、未写外部知识服务。许可证和公开名称尚未确定。
+未配置远端、未 push、未部署。**用户要求本项目后续 push 统一手动执行；代理仅准备本地提交，禁止执行 push 或等效远端 Git 上传。** 许可证与公开名称尚未确定，不阻塞本地开发。

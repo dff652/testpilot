@@ -2,7 +2,7 @@
 
 跨项目测试、Bug 分析、日志排查与知识沉淀工作台。
 
-**当前阶段：开发准备。** 已建立本地仓库及设计文档，尚无可执行产品、适配器或已通过的产品验收。TestPilot 是工作名，与 GitHub TestPilot、TestPilotAI 或文章中的 Testilot 无从属关系。
+**当前阶段：P0 协议与实验准备。** 已提供三份 Schema、离线校验、合成样例和运行时探针；跨项目 Runner、适配器、索引和产品验收尚未完成。TestPilot 是工作名，与 GitHub TestPilot、TestPilotAI 或文章中的 Testilot 无从属关系。
 
 ## 要解决的问题
 
@@ -30,13 +30,30 @@
 | [调研结论](docs/research.md) | 原文章核查、开源候选和证据边界 |
 | [本地项目盘点](docs/project-inventory.md) | 六个样本项目、真实入口及适配约束 |
 | [架构决策](docs/architecture.md) | 组件职责、知识归属和分阶段范围 |
-| [契约草案](docs/contracts.md) | 动作、结果、知识的数据语义 |
+| [数据契约](docs/contracts.md) | 动作、结果、知识的数据语义与 Schema |
+| [试点动作](docs/pilot-actions.md) | 三项目原生动作与知识样本 |
+| [运行时决策](docs/runtime-decision.md) | 可重复 fixture 实验与技术栈选择 |
+| [P0 验收边界](docs/p0-acceptance.md) | 数据、存储、资源决定及后续工作包 |
 | [开发前准备](docs/preparation.md) | 待解决事项、验收数据和开始开发的条件 |
 | [任务与验收](docs/implementation-plan.md) | 主代理与 luna-worker 分工、里程碑 |
 | [开发状态](DEV_STATE.md) | 当前事实、验证范围与下一步 |
 
 ## 当前使用方式
 
-本仓库目前只有文档。文档中的接口名、数据字段和未来目录均为设计草案，不能当作现有功能调用。原项目命令只是盘点证据，执行前仍需检查其资源、副作用及当前项目规则。
+先建立隔离开发环境，再执行本仓库的离线检查：
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
+make check
+# 单独运行 Python/Node 候选对比探针（需要本机 Node）
+make probe
+# 校验一个合成结果，不执行其中声明的动作
+.venv/bin/python scripts/validate_contracts.py result examples/valid/result.json
+```
+
+首次安装依赖需要包源；后续 check/probe 使用本地 fixture，不执行原项目测试。正式支持范围和已验证平台见运行时决策。原项目命令只是接入清单，执行前仍需检查其资源、副作用及当前项目规则。
 
 尚未配置远端或选择发行许可证；创建本地仓库不表示已经公开发布或授权他人复用代码。开发准备完成后，以隔离 fixture 验证协议，再执行获准范围内的原项目检查。
+
+**协作约定：后续 push 统一由用户手动执行。** 代理负责本地开发、验证与提交，不执行 push 或等效远端 Git 上传。

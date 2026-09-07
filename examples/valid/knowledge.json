@@ -1,0 +1,24 @@
+{
+  "schema_version": "0.1.0",
+  "knowledge_id": "lesson.synthetic",
+  "project_id": "fixture",
+  "visibility": "project",
+  "kind": "lesson",
+  "status": "draft",
+  "title": "合成样本：不得作为历史事实",
+  "content": "示例中的版本和哈希是占位值，不是已验证证据。",
+  "source": {
+    "project_id": "fixture",
+    "path": "docs/synthetic.md",
+    "commit": "0000000000000000000000000000000000000000",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "line_start": 1,
+    "line_end": 2
+  },
+  "reviewer": null,
+  "verified_at": null,
+  "evidence": [],
+  "shared_by": null,
+  "superseded_by": null,
+  "updated_at": "2026-09-07T00:00:01Z"
+}

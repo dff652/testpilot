@@ -1,0 +1,45 @@
+{
+  "schema_version": "0.1.0",
+  "project_id": "homelab-doctor",
+  "action_id": "make.test",
+  "adapter_id": "doctor-summary",
+  "kind": "test",
+  "runner": {
+    "executable": "make",
+    "argv": [
+      {
+        "type": "literal",
+        "value": "test"
+      }
+    ],
+    "cwd": "."
+  },
+  "policy": {
+    "effect": "workspace-write",
+    "network": "none",
+    "secrets": "forbidden",
+    "platforms": [
+      "linux"
+    ],
+    "timeout_seconds": 120,
+    "locks": [
+      "git-common-dir"
+    ],
+    "prerequisites": [
+      "POSIX shell/make and complete fixture tree",
+      "Adapter must require final SUMMARY and positive assertion count"
+    ]
+  },
+  "acceptance": {
+    "parser": "doctor-summary",
+    "required_artifacts": [
+      "native-output.log"
+    ],
+    "require_test_counts": true
+  },
+  "source": {
+    "path": "Makefile",
+    "commit": "b2a70444e6be1670633a86c5ebf8c746c54e3bab",
+    "sha256": "d009f3e9cc6140a0c35941fb73ead9f4b9f0e8811d1de338c358353448863259"
+  }
+}
