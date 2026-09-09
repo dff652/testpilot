@@ -2,7 +2,7 @@
 
 ## Scope and state
 
-- Read README.md and DEV_STATE.md first. This repository has P0 contract tooling and fixture probes, not a working cross-project test platform.
+- Read README.md and DEV_STATE.md first. This repository has a P1 local registered-action runner and the Agent Mail versions.check adapter. Other adapters, knowledge indexing, and full product acceptance remain pending.
 - Preserve unrelated edits. Workers own named files; only the integrating agent stages and commits unless explicitly delegated.
 - Documentation and schemas must distinguish proposals, implemented features, executed checks, and verified outcomes.
 - Do not infer authorization to deploy, publish, push, modify production, or run source-project tests from a documentation task.

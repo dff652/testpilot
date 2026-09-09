@@ -2,40 +2,40 @@
 
 ## Goal
 
-完成 TestPilot P0：确定运行时，落实动作/结果/知识契约、合成校验和三个项目接入清单，为 P1 提供可审查基线。
+完成 P1 的 fixture Runner、登记/锁/取消/恢复与首个 Agent Mail 适配器，后续扩展 Go/Shell，再进入知识索引。
 
 ## Verified current state
 
-- 初始文档提交：`5c817b4`。P0 实现提交：`58c27f2`。当前在 main 分支；文档审查提交为 `dc0c3af`，本轮完成其后续缺陷修复。
-- 三份 JSON Schema 0.1.0、跨字段校验 CLI、合成样例、三个项目动作声明和本仓库 Makefile 已实现。
-- 选择 Python 3.12/Linux。当前 Python 3.12.3、Node v20.19.2 的合成子进程探针通过；Node 缺失时 Python 检查也通过。没有速度比较或其他平台验收。
-- `.venv` 隔离安装 `jsonschema==4.26.0`，requirements-dev.txt 固定全部六项解析依赖；系统运行时与原项目依赖未改动。
-- 三项目文档白名单/知识样本、动作来源 commit/hash、锁需求和结果解析要求已登记。
-- 生产 Runner、项目适配器、原生测试基线、知识索引和恢复能力尚未实现/执行。
-- 2026-09-07 复审的 R1–R5 已修复并由主代理整合验收，见 [审查与关闭报告](docs/review-unpushed-2026-09-07.md)。结论限定为已知缺陷关闭，不能替代 P1 行为验收。
+- 本轮基线为 P0 修复提交 `e327f39`；此前 R1–R5 已关闭，三份 schema 保持 0.1.0。
+- Python 3.12/Linux CLI 已实现 register/run/status/cancel/recover。共享校验器位于 `src/testpilot/contracts.py`，旧脚本保留兼容入口。
+- 登记显式绑定 checkout/project/action、来源与入口 hash、工具绝对路径；运行复核漂移，使用 Git common-dir 公共文件锁。
+- 独立监督进程持有锁、限量捕获标准流、取消/超时清理后代并持久化结果；调用者崩溃会收尾，监督进程自身硬崩溃时发现残留则阻断恢复。
+- 原始日志受限保存，RunResult 仅引用安全元数据/脱敏派生文件；原始与派生 hash 分开，截断不报告 passed。
+- Agent Mail 仅接入 versions.check，严格解析 native result 0.1，保持 check 与未知测试计数。
+- Go/Shell 适配器、知识索引、跨机器执行、证据导出/导入/清理尚未实现；不把当前阶段称为完整 P1 或产品验收。
 
 ## Decisions
 
-- CLI 优先，首批 Agent Mail、AI Asset Hub、homelab-doctor。
-- Agent Mail 首动作是静态 `versions.check`，不是测试覆盖；`test.fast` 的失败 fallback 暂不作为自动通过门禁。
-- Go 接入采用待验证的 JSON/无结果缓存事件流，不能把包级 ok 行伪造成测试计数。
-- 知识与证据引用显式带项目归属；解释器入口使用 typed path；结构校验不证明真实文件或记录可信。
-- 项目原生文档为事实来源，索引可重建，运行证据单独管理。P0/P1 不调用外部模型或写 AgentMemory。
+- 只接受 network=none、secrets=forbidden 与 git-common-dir 锁；这是可信登记动作的协作控制，不是 OS 沙箱。
+- 不继承调用者任意环境变量；动作使用 attempt 内 HOME/TMPDIR。没有修改系统运行时或源项目依赖。
+- 同 run 新执行产生独立 attempt，恢复不自动重跑。旧结果不覆盖。
+- 首动作是静态 versions.check；test.fast 的失败 fallback 仍不作为自动通过门禁。
+- P0/P1 不调用外部模型、不外发资料、不写 AgentMemory。
 
 ## Validation
 
-- `make check`：8 个 unittest 测试，65 个 mutation 场景、三类基础样例、三个试点声明及非法顶层类型；本地 Markdown 链接和 diff 检查通过。
-- `make probe`：Python/Node literal argv、ready 握手、TERM 超时/KILL、Linux subreaper 回收（含 zombie）、中文路径/hash/JSON 通过。
-- `PATH=/nonexistent /usr/bin/python3 scripts/runtime_probe.py`：Node 缺失场景通过。
-- `.venv/bin/python -m pip check`：通过。
-- 定向源检查：15 个白名单文档路径及三份源文件 SHA-256 一致。
-- 主代理审查两个 worker 的修复，独立验证 2,048 组计数补全和 32 组解释器入口/参数组合，均通过；非 UTF-8 环境探针、中文链接及 Node 缺失回归通过。旧版本对照能触发新增回归失败。
-- P0 实现提交时 `git diff --cached --check` 与暂存敏感内容扫描通过，提交范围限定本项目 26 个文件。没有执行任何原项目测试、生产操作或外部知识写入。
+- `make check`：41 个测试通过，包含 65 个契约 mutation 场景；43 个本地文档链接、编译检查和依赖一致性检查通过；本仓库单测/合成进程覆盖正常与错误结果、登记/状态/多 attempt、路径/参数、共享 worktree 锁、取消/超时、崩溃恢复、截断与脱敏。
+- 主代理独立验证真实 TERM 抵抗及另建 session 的后代均被回收；caller SIGKILL 后监督进程保存失败并收尾；监督进程 SIGKILL 后保留残留阻断，fixture 显式清理后才恢复。
+- Agent Mail `97710415187df20b6fa61daa39d8499f3db24e8e` 临时 clone：直接 SOP 与包装调用均 passed/0；kind=check，counts 全 null。
+- 原 Agent Mail checkout 的 Git 状态与 SOP 记录元数据前后相同；没有运行其测试或生产动作。
+- 详细证据、初轮失败及修复、适用范围见 [P1 验收](docs/p1-runner.md)。受限原始证据在 `.testpilot/acceptance/2026-09-09-agent-mail/`，不进 Git。
+
+- 暂存 diff 与敏感扫描通过；提交范围限定 34 个相关文件，受限原始证据未暂存。
 
 ## Next action
 
-已关闭本轮审查缺陷；下一步进入 P1：实现 fixture Runner、注册表与资源锁，再接 Agent Mail 第一个适配器。按 [P0 验收边界](docs/p0-acceptance.md) 分配文件所有权并验证错误路径，之后扩展 Go/Shell 与知识索引。
+按 [任务计划](docs/implementation-plan.md) 接入 Go 与 Shell 的结果解析和资源映射，分别做隔离原生对照；之后实现 P2 索引及知识闭环。
 
 ## External state
 
-未配置远端、未 push、未部署。**用户要求本项目后续 push 统一手动执行；代理仅准备本地提交，禁止执行 push 或等效远端 Git 上传。** 许可证与公开名称尚未确定，不阻塞本地开发。
+未配置远端、未 push、未部署。**后续 push 统一由用户手动执行，代理只准备本地提交。** 许可证、公开名称和远程能力尚未确定。

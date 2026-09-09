@@ -1,0 +1,25 @@
+{
+  "$schema": "./schema.json",
+  "schema_version": "0.1",
+  "description": "Fixture Agent Mail development SOP actions",
+  "actions": [
+    {
+      "id": "versions.check",
+      "description": "Check Python and TypeScript version declarations",
+      "runner": {
+        "kind": "sop",
+        "entry": "versions",
+        "aliases": []
+      },
+      "parameters": [],
+      "timeout_seconds": 60,
+      "effect": "inspect",
+      "network": "none",
+      "secrets": "forbidden",
+      "platforms": ["linux", "macos", "windows-wsl"],
+      "artifacts": [],
+      "ci_required": false,
+      "mcp_phase": "mcp0"
+    }
+  ]
+}

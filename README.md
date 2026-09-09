@@ -2,7 +2,7 @@
 
 跨项目测试、Bug 分析、日志排查与知识沉淀工作台。
 
-**当前阶段：P0 协议与实验准备。** 已提供三份 Schema、离线校验、合成样例和运行时探针；跨项目 Runner、适配器、索引和产品验收尚未完成。TestPilot 是工作名，与 GitHub TestPilot、TestPilotAI 或文章中的 Testilot 无从属关系。
+**当前阶段：P1 Runner 与首个适配器。** 已提供三份 Schema、离线校验、登记/执行/取消/恢复 CLI，以及 Agent Mail `versions.check` 适配器；Go/Shell 适配器、知识索引和完整产品验收尚未完成。TestPilot 是工作名，与 GitHub TestPilot、TestPilotAI 或文章中的 Testilot 无从属关系。
 
 ## 要解决的问题
 
@@ -32,6 +32,7 @@
 | [架构决策](docs/architecture.md) | 组件职责、知识归属和分阶段范围 |
 | [数据契约](docs/contracts.md) | 动作、结果、知识的数据语义与 Schema |
 | [试点动作](docs/pilot-actions.md) | 三项目原生动作与知识样本 |
+| [P1 CLI 与验收](docs/p1-runner.md) | 登记动作、运行证据、锁与恢复、隔离原生对照 |
 | [运行时决策](docs/runtime-decision.md) | 可重复 fixture 实验与技术栈选择 |
 | [P0 验收边界](docs/p0-acceptance.md) | 数据、存储、资源决定及后续工作包 |
 | [开发前准备](docs/preparation.md) | 待解决事项、验收数据和开始开发的条件 |
@@ -47,6 +48,7 @@
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements-dev.txt
 make check
+.venv/bin/python scripts/testpilot.py --help
 # 单独运行探针；Node 可选，缺失时仍验证 Python
 make probe
 # 校验一个合成结果，不执行其中声明的动作
@@ -55,6 +57,6 @@ make probe
 
 首次安装依赖需要包源；后续 check/probe 使用本地 fixture，不执行原项目测试。正式支持范围和已验证平台见运行时决策。原项目命令只是接入清单，执行前仍需检查其资源、副作用及当前项目规则。
 
-尚未配置远端或选择发行许可证；创建本地仓库不表示已经公开发布或授权他人复用代码。开发准备完成后，以隔离 fixture 验证协议，再执行获准范围内的原项目检查。
+尚未配置远端或选择发行许可证；创建本地仓库不表示已经公开发布或授权他人复用代码。P1 已完成隔离 fixture 与 Agent Mail 副本对照；实际原 checkout 的动作范围需由调用者明确选择。
 
 **协作约定：后续 push 统一由用户手动执行。** 代理负责本地开发、验证与提交，不执行 push 或等效远端 Git 上传。

@@ -45,11 +45,11 @@ P0/P1 不调用模型、不外发资料、不写 AgentMemory。后续模型接�
 
 ## 下一阶段任务所有权
 
-以下是拟定代码范围，尚未创建，不是已有模块：
+截至 2026-09-09，Runner、登记/CLI 与 Agent Mail 首适配器已实现，见 [P1 实现与验收](p1-runner.md)。以下为已落实的所有权与后续扩展：
 
-1. 主代理：冻结 schema 和注册接口，负责 `src/testpilot/runner/` 的执行、锁、恢复设计与集成验收。
-2. 单个 luna-worker：首先实现 `src/testpilot/adapters/agent_mail.py` 及 `tests/adapters/test_agent_mail.py`，读取原生 SOP JSON，尊重原生排除动作；不得修改 shared schema。
+1. 主代理：保持 schema 与注册接口一致，已实现并负责 `src/testpilot/runner/` 的执行、锁、恢复设计与集成验收。
+2. 单个 luna-worker：已实现 `src/testpilot/adapters/agent_mail.py` 及 `tests/adapters/test_agent_mail.py`，读取原生 SOP JSON，尊重原生排除动作；不得修改 shared schema。
 3. 接口经首个适配器验证后，再分配 Go 和 Shell 适配器的独立文件；禁止三个 worker 各自实现进程管理。
 4. 另一独立工作包：`src/testpilot/index/` 与相应测试，先验证 fixture 的增改删、中文定位和项目隔离，再接真实文档。
 
-拟定的局部验收命令分别为 `.venv/bin/python -m unittest discover -s tests/runner`、`-s tests/adapters` 和 `-s tests/index`（这些目录在 P1/P2 创建，当前不可作为已执行结果）。每个任务开始前再补齐确切输入样例和允许动作。主代理在整合后的 commit 上核验完整 diff、实际输出、错误路径和未验证项；通过才更新里程碑状态。
+Runner/适配器局部验收使用 `PYTHONPATH=src .venv/bin/python -m unittest discover -s tests/runner` 和对应的 `-s tests/adapters`；`tests/index` 尚未创建，不能作为已执行结果。每个任务开始前再补齐确切输入样例和允许动作。主代理在整合后的 commit 上核验完整 diff、实际输出、错误路径和未验证项；通过才更新里程碑状态。

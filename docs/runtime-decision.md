@@ -2,6 +2,8 @@
 
 日期：2026-09-07。状态：已在当前 Linux 主机完成合成 fixture 实验；其他平台仍未验证。
 
+P1 的实际 CLI/监督进程及隔离原生对照见 [P1 实现与验收](p1-runner.md)；本页保留独立 P0 探针的实验范围。
+
 ## 结论
 
 首版 CLI/Runner 确定使用 **Python 3.12 + Linux**。选择依据是维护成本：Agent Mail 已有只依赖 Python 标准库的 `scripts/dev_sop.py`，其动作清单、结果写入、进程组取消和运行记录可以作为现有实现参考。Node.js 20 在同一台机器上通过了候选实验，但没有做速度 benchmark，因此不能据此宣称 Node 更快或更慢。
